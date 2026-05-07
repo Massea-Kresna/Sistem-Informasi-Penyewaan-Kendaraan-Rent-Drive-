@@ -1,0 +1,42 @@
+@extends('pelanggan.layout')
+@section('title', 'Daftar Mobil')
+
+@section('content')
+<h4 class="mb-3">Daftar Mobil</h4>
+<p class="text-muted">Pilih mobil yang tersedia untuk disewa.</p>
+
+@if(count($mobils) === 0)
+    <div class="alert alert-info">Belum ada mobil di sistem.</div>
+@endif
+
+<div class="row">
+    @foreach($mobils as $m)
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 {{ $m->status !== 'tersedia' ? 'opacity-75' : '' }}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ $m->nama_mobil }}</h5>
+                        @if($m->status === 'tersedia')
+                            <span class="badge bg-success">Tersedia</span>
+                        @else
+                            <span class="badge bg-danger">Tidak Tersedia</span>
+                        @endif
+                    </div>
+                    <p class="text-muted mb-1"><strong>Merek:</strong> {{ $m->merek }}</p>
+                    <p class="text-muted mb-1"><strong>Plat:</strong> {{ $m->plat_nomor }}</p>
+                    <h5 class="text-primary mt-3">Rp {{ number_format($m->harga_sewa) }}<small class="text-muted">/hari</small></h5>
+                </div>
+                <div class="card-footer bg-white border-0">
+                    @if($m->status === 'tersedia')
+                        <a href="{{ route('pelanggan.pilih', $m->id_mobil) }}" class="btn btn-primary w-100">
+                            Pilih & Sewa
+                        </a>
+                    @else
+                        <button class="btn btn-secondary w-100" disabled>Sedang Disewa</button>
+                    @endif
+                </div>
+            </div>
+        </div>
+    @endforeach
+</div>
+@endsection

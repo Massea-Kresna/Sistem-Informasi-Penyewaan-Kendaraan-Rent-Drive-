@@ -31,13 +31,19 @@
             <td>{{ $d->tanggal_sewa }}</td>
             <td>{{ $d->tanggal_kembali ?? '-' }}</td>
             <td>
-                <span class="badge bg-{{ $d->status == 'selesai' ? 'secondary' : 'warning text-dark' }}">
-                    {{ $d->status }}
-                </span>
+                @php
+                    $badge = [
+                        'pending'    => 'warning text-dark',
+                        'dibayar'    => 'info',
+                        'selesai'    => 'secondary',
+                        'dibatalkan' => 'danger',
+                    ][$d->status] ?? 'light';
+                @endphp
+                <span class="badge bg-{{ $badge }}">{{ $d->status }}</span>
             </td>
             <td>{{ $d->total_biaya ? 'Rp ' . number_format($d->total_biaya) : '-' }}</td>
             <td>
-                @if($d->status != 'selesai')
+                @if($d->status == 'dibayar')
                     <form method="POST" action="{{ route('penyewaan.kembali', $d->id_sewa) }}" style="display:inline">
                         @csrf
                         <button onclick="return confirm('Kembalikan mobil ini?')" class="btn btn-primary btn-sm">Kembalikan</button>
