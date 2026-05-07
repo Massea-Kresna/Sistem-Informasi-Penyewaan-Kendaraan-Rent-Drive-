@@ -27,16 +27,16 @@ class PenyewaanController extends Controller {
             'id_pelanggan'  => 'required',
             'tanggal_sewa'  => 'required|date',
         ]);
+        // Admin langsung membuat penyewaan dengan status 'dibayar' (rental aktif)
         DB::insert(
-            'INSERT INTO penyewaan(id_mobil, id_pelanggan, tanggal_sewa)
-             VALUES (:id_mobil, :id_pelanggan, :tanggal_sewa)',
+            "INSERT INTO penyewaan(id_mobil, id_pelanggan, tanggal_sewa, status)
+             VALUES (:id_mobil, :id_pelanggan, :tanggal_sewa, 'dibayar')",
             [
                 'id_mobil'     => $request->id_mobil,
                 'id_pelanggan' => $request->id_pelanggan,
                 'tanggal_sewa' => $request->tanggal_sewa,
             ]
         );
-        // Update status mobil jadi 'disewa'
         DB::update(
             "UPDATE mobil SET status='disewa' WHERE id_mobil=:id",
             ['id' => $request->id_mobil]

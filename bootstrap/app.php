@@ -11,7 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'pelanggan.auth' => \App\Http\Middleware\PelangganAuth::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

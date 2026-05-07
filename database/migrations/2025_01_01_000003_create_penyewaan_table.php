@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->unsignedInteger('id_pelanggan');
             $table->date('tanggal_sewa');
             $table->date('tanggal_kembali')->nullable();
-            $table->enum('status', ['berjalan', 'selesai'])->default('berjalan');
+            $table->enum('status', ['pending', 'dibayar', 'selesai', 'dibatalkan'])->default('pending');
             $table->integer('total_biaya')->nullable();
 
             $table->foreign('id_mobil')->references('id_mobil')->on('mobil');
