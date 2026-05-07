@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pelanggan extends Model
 {
-    protected $table = 'mobil';
-    protected $primaryKey = 'id_mobil';
+    protected $table = 'pelanggan';
+    protected $primaryKey = 'id_pelanggan';
     protected $guarded = [];
     public $timestamps = false;
 }

@@ -5,9 +5,7 @@ use App\Http\Controllers\MobilController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PenyewaanController;
 
-Route::get('/', function () {
-    return view('penyewaan.index');
-});
+Route::get('/', [PenyewaanController::class, 'index'])->name('home');
 
 // Mobil Routes
 Route::get('/mobil', [MobilController::class, 'index'])->name('mobil.index');
@@ -27,7 +25,7 @@ Route::post('/pelanggan/delete/{id}', [PelangganController::class, 'delete'])->n
 
 // Penyewaan Routes
 Route::get('/penyewaan', [PenyewaanController::class, 'index'])->name('penyewaan.index');
-Route::get('/penyewaan/add', [PenyewaanController::class, 'add'])->name('penyewaan.add');
+Route::get('/penyewaan/add', [PenyewaanController::class, 'create'])->name('penyewaan.create');
 Route::post('/penyewaan/store', [PenyewaanController::class, 'store'])->name('penyewaan.store');
 Route::post('/penyewaan/kembali/{id}', [PenyewaanController::class, 'kembali'])->name('penyewaan.kembali');
 Route::post('/penyewaan/delete/{id}', [PenyewaanController::class, 'delete'])->name('penyewaan.delete');
