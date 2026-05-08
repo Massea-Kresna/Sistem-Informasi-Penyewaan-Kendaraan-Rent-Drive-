@@ -24,7 +24,7 @@
                 <h5>Mobil Dipilih</h5>
                 <hr>
                 @if($mobil->foto_mobil)
-                    <img src="{{ $mobil->foto_mobil }}" class="img-fluid rounded mb-2"
+                    <img src="{{ asset('storage/' . $mobil->foto_mobil) }}" class="img-fluid rounded mb-2"
                          style="max-height:160px; object-fit:cover; width:100%;"
                          onerror="this.style.display='none'">
                 @endif

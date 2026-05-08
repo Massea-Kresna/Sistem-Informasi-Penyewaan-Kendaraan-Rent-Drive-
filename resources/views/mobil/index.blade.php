@@ -29,7 +29,8 @@
             <td>{{ $i+1 }}</td>
             <td>
                 @if($d->foto_mobil)
-                    <img src="{{ $d->foto_mobil }}" alt="" style="width:60px; height:40px; object-fit:cover;"
+                    <img src="{{ asset('storage/' . $d->foto_mobil) }}" alt=""
+                         style="width:60px; height:40px; object-fit:cover;"
                          onerror="this.style.display='none'">
                 @else
                     <span class="text-muted">-</span>

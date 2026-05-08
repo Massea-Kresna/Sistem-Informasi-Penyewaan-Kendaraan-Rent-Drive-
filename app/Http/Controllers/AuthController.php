@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -58,8 +59,13 @@ class AuthController extends Controller
             'no_hp'         => 'required|max:20',
             'alamat'        => 'required|max:255',
             'tanggal_lahir' => 'required|date|before:today',
-            'foto_ktp'      => 'nullable|url|max:500',
+            'foto_ktp'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        $fotoPath = null;
+        if ($request->hasFile('foto_ktp')) {
+            $fotoPath = $request->file('foto_ktp')->store('foto_ktp', 'public');
+        }
 
         DB::table('pelanggan')->insert([
             'email'         => $request->email,
@@ -69,7 +75,7 @@ class AuthController extends Controller
             'no_hp'         => $request->no_hp,
             'alamat'        => $request->alamat,
             'tanggal_lahir' => $request->tanggal_lahir,
-            'foto_ktp'      => $request->foto_ktp,
+            'foto_ktp'      => $fotoPath,
             'created_at'    => now(),
         ]);
 
@@ -114,7 +120,7 @@ class AuthController extends Controller
             'no_hp'         => 'required|max:20',
             'alamat'        => 'required|max:255',
             'tanggal_lahir' => 'required|date|before:today',
-            'foto_ktp'      => 'nullable|url|max:500',
+            'foto_ktp'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'password'      => 'nullable|min:6|confirmed',
         ]);
 
@@ -125,10 +131,14 @@ class AuthController extends Controller
             'no_hp'         => $request->no_hp,
             'alamat'        => $request->alamat,
             'tanggal_lahir' => $request->tanggal_lahir,
-            'foto_ktp'      => $request->foto_ktp,
         ];
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
+        }
+        if ($request->hasFile('foto_ktp')) {
+            $old = DB::table('pelanggan')->where('id_pelanggan', $id)->value('foto_ktp');
+            if ($old) Storage::disk('public')->delete($old);
+            $data['foto_ktp'] = $request->file('foto_ktp')->store('foto_ktp', 'public');
         }
 
         DB::table('pelanggan')->where('id_pelanggan', $id)->update($data);

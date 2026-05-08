@@ -9,7 +9,7 @@
 @endif
 
 <div class="card"><div class="card-body">
-    <form method="POST" action="{{ route('pelanggan.store') }}">
+    <form method="POST" action="{{ route('pelanggan.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-md-7 mb-3">
@@ -47,9 +47,8 @@
             <textarea name="alamat" class="form-control" rows="2" required>{{ old('alamat') }}</textarea>
         </div>
         <div class="mb-3">
-            <label>URL Foto KTP <small class="text-muted">(opsional)</small></label>
-            <input type="url" name="foto_ktp" class="form-control"
-                   placeholder="https://example.com/ktp.jpg" value="{{ old('foto_ktp') }}">
+            <label>Foto KTP <small class="text-muted">(opsional, JPG/PNG max 2MB)</small></label>
+            <input type="file" name="foto_ktp" class="form-control" accept="image/jpeg,image/png">
         </div>
         <button type="submit" class="btn btn-primary">Simpan</button>
         <a href="{{ route('pelanggan.index') }}" class="btn btn-secondary">Batal</a>

@@ -11,7 +11,7 @@
     </div>
 @endif
 
-<form method="POST" action="{{ route('pelanggan.proses', $sewa->id_sewa) }}">
+<form method="POST" action="{{ route('pelanggan.proses', $sewa->id_sewa) }}" enctype="multipart/form-data">
     @csrf
     <div class="row">
         <div class="col-md-6">
@@ -63,11 +63,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">URL Bukti Transfer <small class="text-muted">(opsional)</small></label>
-                        <input type="url" name="bukti_transfer" class="form-control"
-                               placeholder="https://example.com/bukti.jpg"
-                               value="{{ old('bukti_transfer') }}">
-                        <small class="text-muted">Untuk metode transfer, sertakan link foto bukti.</small>
+                        <label class="form-label">Foto Bukti Transfer <small class="text-muted">(opsional, JPG/PNG max 2MB)</small></label>
+                        <input type="file" name="bukti_transfer" class="form-control" accept="image/jpeg,image/png">
+                        <small class="text-muted">Untuk metode transfer, unggah foto bukti pembayaran Anda.</small>
                     </div>
 
                     <div class="alert alert-info">

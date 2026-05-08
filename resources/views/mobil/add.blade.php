@@ -7,7 +7,7 @@
     </div>
 @endif
 <div class="card"><div class="card-body">
-    <form method="POST" action="{{ route('mobil.store') }}">
+    <form method="POST" action="{{ route('mobil.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-md-6 mb-3">
@@ -46,9 +46,8 @@
             </div>
         </div>
         <div class="mb-3">
-            <label>URL Foto Mobil <small class="text-muted">(opsional)</small></label>
-            <input type="url" name="foto_mobil" class="form-control"
-                   placeholder="https://example.com/mobil.jpg" value="{{ old('foto_mobil') }}">
+            <label>Foto Mobil <small class="text-muted">(opsional, JPG/PNG max 2MB)</small></label>
+            <input type="file" name="foto_mobil" class="form-control" accept="image/jpeg,image/png">
         </div>
         <div class="mb-3">
             <label>Deskripsi <small class="text-muted">(opsional)</small></label>

@@ -14,7 +14,7 @@
         <div class="col-md-4 mb-4">
             <div class="card h-100 {{ $m->status !== 'tersedia' ? 'opacity-75' : '' }}">
                 @if($m->foto_mobil)
-                    <img src="{{ $m->foto_mobil }}" class="card-img-top" alt="{{ $m->nama_mobil }}"
+                    <img src="{{ asset('storage/' . $m->foto_mobil) }}" class="card-img-top" alt="{{ $m->nama_mobil }}"
                          style="height:180px; object-fit:cover;"
                          onerror="this.style.display='none'">
                 @else

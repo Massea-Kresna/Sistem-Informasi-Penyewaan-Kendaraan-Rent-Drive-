@@ -7,7 +7,7 @@
     </div>
 @endif
 <div class="card"><div class="card-body">
-    <form method="POST" action="{{ route('mobil.update', $data->id_mobil) }}">
+    <form method="POST" action="{{ route('mobil.update', $data->id_mobil) }}" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-md-6 mb-3">
@@ -46,9 +46,14 @@
             </div>
         </div>
         <div class="mb-3">
-            <label>URL Foto Mobil <small class="text-muted">(opsional)</small></label>
-            <input type="url" name="foto_mobil" class="form-control" value="{{ $data->foto_mobil }}"
-                   placeholder="https://example.com/mobil.jpg">
+            <label>Foto Mobil <small class="text-muted">(opsional, JPG/PNG max 2MB — kosongkan jika tidak diubah)</small></label>
+            <input type="file" name="foto_mobil" class="form-control" accept="image/jpeg,image/png">
+            @if($data->foto_mobil)
+                <div class="mt-2">
+                    <small class="text-muted">Foto saat ini:</small><br>
+                    <img src="{{ asset('storage/' . $data->foto_mobil) }}" alt="Foto" style="max-height:120px;">
+                </div>
+            @endif
         </div>
         <div class="mb-3">
             <label>Deskripsi <small class="text-muted">(opsional)</small></label>

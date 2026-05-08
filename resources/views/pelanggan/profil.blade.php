@@ -13,7 +13,7 @@
 
 <div class="card">
     <div class="card-body">
-        <form method="POST" action="{{ route('pelanggan.profil.update') }}">
+        <form method="POST" action="{{ route('pelanggan.profil.update') }}" enctype="multipart/form-data">
             @csrf
 
             <h6 class="text-muted mb-3">Akun</h6>
@@ -61,14 +61,12 @@
                 <textarea name="alamat" class="form-control" rows="2" required>{{ old('alamat', $user->alamat) }}</textarea>
             </div>
             <div class="mb-3">
-                <label class="form-label">URL Foto KTP <small class="text-muted">(opsional)</small></label>
-                <input type="url" name="foto_ktp" class="form-control"
-                       placeholder="https://example.com/ktp.jpg"
-                       value="{{ old('foto_ktp', $user->foto_ktp) }}">
+                <label class="form-label">Foto KTP <small class="text-muted">(opsional, JPG/PNG max 2MB — kosongkan jika tidak diubah)</small></label>
+                <input type="file" name="foto_ktp" class="form-control" accept="image/jpeg,image/png">
                 @if($user->foto_ktp)
                     <div class="mt-2">
-                        <img src="{{ $user->foto_ktp }}" alt="KTP" style="max-height:100px;"
-                             onerror="this.style.display='none'">
+                        <small class="text-muted">Foto KTP saat ini:</small><br>
+                        <img src="{{ asset('storage/' . $user->foto_ktp) }}" alt="KTP" style="max-height:120px;">
                     </div>
                 @endif
             </div>

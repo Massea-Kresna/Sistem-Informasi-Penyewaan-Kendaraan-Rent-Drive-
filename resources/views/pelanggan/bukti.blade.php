@@ -62,7 +62,13 @@
                         </tr>
                         @if($pembayaran->bukti_transfer)
                             <tr><th>Bukti Transfer</th>
-                                <td><a href="{{ $pembayaran->bukti_transfer }}" target="_blank">Lihat Bukti</a></td>
+                                <td>
+                                    <a href="{{ asset('storage/' . $pembayaran->bukti_transfer) }}" target="_blank">Lihat Bukti</a>
+                                    <div class="mt-2">
+                                        <img src="{{ asset('storage/' . $pembayaran->bukti_transfer) }}"
+                                             alt="Bukti" style="max-height:120px;">
+                                    </div>
+                                </td>
                             </tr>
                         @endif
                     @endif
