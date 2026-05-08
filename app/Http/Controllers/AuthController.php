@@ -99,7 +99,7 @@ class AuthController extends Controller
             ->with('success', 'Anda berhasil logout.');
     }
 
-    // Tampilkan profil pelanggan
+    //Tampilkan profil pelanggan
     public function showProfil()
     {
         $user = DB::table('pelanggan')
