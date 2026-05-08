@@ -13,6 +13,11 @@ return new class extends Migration {
             $table->string('no_ktp', 30)->unique();
             $table->string('no_hp', 20);
             $table->string('alamat', 255);
+            $table->string('email', 150)->unique();
+            $table->string('password', 255);
+            $table->string('foto_ktp', 500)->nullable();
+            $table->date('tanggal_lahir');
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

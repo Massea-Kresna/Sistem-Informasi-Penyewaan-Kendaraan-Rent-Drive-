@@ -8,14 +8,14 @@
             <div class="card-body text-center py-5">
                 <div style="font-size:60px">⚠️</div>
                 <h4 class="text-danger mt-3">Pembayaran Gagal</h4>
-                <p class="text-muted">Mohon maaf, pembayaran Anda untuk pesanan #{{ $sewa->id_sewa }} tidak dapat diproses.</p>
+                <p class="text-muted">Mohon maaf, pembayaran untuk pesanan #{{ $sewa->id_sewa }} tidak berhasil diproses.</p>
 
                 <hr>
                 <p class="mb-1"><strong>{{ $sewa->nama_mobil }}</strong> ({{ $sewa->plat_nomor }})</p>
                 <p>Total: <strong>Rp {{ number_format($sewa->total_biaya) }}</strong></p>
                 <hr>
 
-                <p class="text-muted">Silakan coba lagi atau batalkan pesanan.</p>
+                <p class="text-muted">Silakan coba kembali atau batalkan pesanan.</p>
 
                 <div class="d-grid gap-2 mt-4">
                     <a href="{{ route('pelanggan.bayar', $sewa->id_sewa) }}" class="btn btn-primary btn-lg">

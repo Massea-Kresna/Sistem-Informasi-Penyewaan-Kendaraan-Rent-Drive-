@@ -7,7 +7,7 @@
 @if(count($datas) === 0)
     <div class="alert alert-info">
         Anda belum memiliki riwayat penyewaan.
-        <a href="{{ route('pelanggan.mobil') }}">Mulai sewa sekarang →</a>
+        <a href="{{ route('pelanggan.mobil') }}">Mulai menyewa sekarang →</a>
     </div>
 @else
 <table class="table table-hover">
