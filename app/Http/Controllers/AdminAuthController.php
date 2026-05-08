@@ -26,7 +26,7 @@ class AdminAuthController extends Controller
 
         if (!$admin || !Hash::check($request->password, $admin->password)) {
             return back()->withErrors([
-                'username' => 'Username atau password admin salah.',
+                'username' => 'Username atau password admin Salah.',
             ])->withInput($request->only('username'));
         }
 
