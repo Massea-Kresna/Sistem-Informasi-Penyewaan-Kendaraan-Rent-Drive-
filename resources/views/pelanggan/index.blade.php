@@ -17,7 +17,7 @@
             <th>No HP</th>
             <th>Tgl Lahir</th>
             <th>Alamat</th>
-            <th>Aksi</th>
+            <th>Opsi</th>
         </tr>
     </thead>
     <tbody>

@@ -20,7 +20,7 @@
             <th>Kapasitas</th>
             <th>Harga/Hari</th>
             <th>Status</th>
-            <th>Aksi</th>
+            <th>Opsi</th>
         </tr>
     </thead>
     <tbody>

@@ -19,7 +19,7 @@
             <th>Tgl Kembali</th>
             <th>Total</th>
             <th>Status</th>
-            <th>Aksi</th>
+            <th>Opsi</th>
         </tr>
     </thead>
     <tbody>

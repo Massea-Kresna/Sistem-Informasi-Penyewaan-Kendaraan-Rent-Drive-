@@ -20,7 +20,7 @@
             <th>Status</th>
             <th>Metode Bayar</th>
             <th>Total</th>
-            <th>Aksi</th>
+            <th>Opsi</th>
         </tr>
     </thead>
     <tbody>
@@ -55,7 +55,7 @@
                 @if($d->status == 'dibayar')
                     <form method="POST" action="{{ route('penyewaan.kembali', $d->id_sewa) }}" style="display:inline">
                         @csrf
-                        <button onclick="return confirm('Kembalikan mobil ini?')" class="btn btn-primary btn-sm">Kembalikan</button>
+                        <button onclick="return confirm('Selesaikan sewa ini? Mobil akan ditandai sudah dikembalikan.')" class="btn btn-primary btn-sm">Selesaikan Sewa</button>
                     </form>
                 @endif
                 <form method="POST" action="{{ route('penyewaan.delete', $d->id_sewa) }}" style="display:inline">
