@@ -8,7 +8,7 @@ class PaymentController extends Controller
 {
     private function getOwnedSewa($id)
     {
-        $sewa = DB::table('penyewaan as p')
+        return DB::table('penyewaan as p')
             ->join('mobil as m', 'p.id_mobil', '=', 'm.id_mobil')
             ->join('pelanggan as pl', 'p.id_pelanggan', '=', 'pl.id_pelanggan')
             ->where('p.id_sewa', $id)
@@ -16,9 +16,17 @@ class PaymentController extends Controller
             ->select(
                 'p.*',
                 'm.nama_mobil', 'm.merek', 'm.plat_nomor', 'm.harga_sewa',
-                'pl.nama as nama_pelanggan', 'pl.no_hp', 'pl.alamat'
+                'm.tahun_pembuatan', 'm.warna', 'm.kapasitas_penumpang', 'm.foto_mobil',
+                'pl.nama as nama_pelanggan', 'pl.no_hp', 'pl.alamat', 'pl.email'
             )->first();
-        return $sewa;
+    }
+
+    private function getPembayaran($idSewa)
+    {
+        return DB::table('pembayaran')
+            ->where('id_sewa', $idSewa)
+            ->orderByDesc('id_pembayaran')
+            ->first();
     }
 
     // Pembayaran Mobil - tampilkan form pembayaran
@@ -43,26 +51,35 @@ class PaymentController extends Controller
             return redirect()->route('pelanggan.riwayat');
         }
 
+        $request->validate([
+            'metode_pembayaran' => 'required|in:transfer,cash',
+            'bukti_transfer'    => 'nullable|url|max:500',
+            'hasil'             => 'required|in:sukses,gagal',
+        ]);
+
         $hasil = $request->input('hasil');
 
+        // Insert ke tabel pembayaran
+        DB::table('pembayaran')->insert([
+            'id_sewa'           => $id,
+            'jumlah_bayar'      => $sewa->total_biaya,
+            'metode_pembayaran' => $request->metode_pembayaran,
+            'tanggal_bayar'     => date('Y-m-d'),
+            'bukti_transfer'    => $request->bukti_transfer,
+            'status_pembayaran' => $hasil === 'sukses' ? 'berhasil' : 'gagal',
+            'created_at'        => now(),
+        ]);
+
         if ($hasil === 'sukses') {
-            // Verifikasi Pembayaran
-            // Update Status Penyewaan = Berhasil Dibayar
-            DB::update(
-                "UPDATE penyewaan SET status='dibayar' WHERE id_sewa=:id",
-                ['id' => $id]
-            );
+            // Verifikasi Pembayaran → Update Status Penyewaan = Berhasil Dibayar
+            DB::update("UPDATE penyewaan SET status='dibayar' WHERE id_sewa=:id", ['id' => $id]);
             // Update Status Mobil = Disewa
-            DB::update(
-                "UPDATE mobil SET status='disewa' WHERE id_mobil=:id",
-                ['id' => $sewa->id_mobil]
-            );
-            // Kirim Notifikasi & Bukti Sewa → Tampilkan Bukti
+            DB::update("UPDATE mobil SET status='disewa' WHERE id_mobil=:id", ['id' => $sewa->id_mobil]);
+
             return redirect()->route('pelanggan.bukti', $id)
                 ->with('success', 'Pembayaran berhasil! Mobil telah dikonfirmasi disewa.');
         }
 
-        // Pembayaran gagal → Tampilkan Gagal Bayar (retry / cancel)
         return redirect()->route('pelanggan.gagal', $id);
     }
 
@@ -84,11 +101,7 @@ class PaymentController extends Controller
             return redirect()->route('pelanggan.riwayat')
                 ->with('error', 'Pesanan tidak dapat dibatalkan.');
         }
-        // Update Status Penyewaan = Dibatalkan
-        DB::update(
-            "UPDATE penyewaan SET status='dibatalkan' WHERE id_sewa=:id",
-            ['id' => $id]
-        );
+        DB::update("UPDATE penyewaan SET status='dibatalkan' WHERE id_sewa=:id", ['id' => $id]);
         return redirect()->route('pelanggan.riwayat')
             ->with('success', 'Pesanan telah dibatalkan.');
     }
@@ -108,6 +121,7 @@ class PaymentController extends Controller
             return redirect()->route('pelanggan.riwayat')
                 ->with('error', 'Pesanan ini telah dibatalkan.');
         }
-        return view('pelanggan.bukti', compact('sewa'));
+        $pembayaran = $this->getPembayaran($id);
+        return view('pelanggan.bukti', compact('sewa', 'pembayaran'));
     }
 }

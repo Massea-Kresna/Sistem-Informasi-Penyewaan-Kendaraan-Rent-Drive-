@@ -12,8 +12,10 @@
         <tr>
             <th>No</th>
             <th>Nama</th>
+            <th>Email</th>
             <th>No KTP</th>
             <th>No HP</th>
+            <th>Tgl Lahir</th>
             <th>Alamat</th>
             <th>Aksi</th>
         </tr>
@@ -23,9 +25,11 @@
         <tr>
             <td>{{ $i+1 }}</td>
             <td>{{ $d->nama }}</td>
+            <td>{{ $d->email }}</td>
             <td>{{ $d->no_ktp }}</td>
             <td>{{ $d->no_hp }}</td>
-            <td>{{ $d->alamat }}</td>
+            <td>{{ $d->tanggal_lahir }}</td>
+            <td>{{ Str::limit($d->alamat, 30) }}</td>
             <td>
                 <a href="{{ route('pelanggan.edit', $d->id_pelanggan) }}" 
                    class="btn btn-warning btn-sm">Ubah</a>

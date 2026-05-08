@@ -21,6 +21,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('pelanggan.riwayat') }}">Riwayat Sewa</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('pelanggan.profil') }}">Profil</a>
+                </li>
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item">

@@ -36,9 +36,10 @@ class BookingController extends Controller
     public function konfirmasi(Request $request)
     {
         $request->validate([
-            'id_mobil'       => 'required|integer',
-            'tanggal_sewa'   => 'required|date|after_or_equal:today',
-            'tanggal_kembali'=> 'required|date|after:tanggal_sewa',
+            'id_mobil'        => 'required|integer',
+            'tanggal_sewa'    => 'required|date|after_or_equal:today',
+            'tanggal_kembali' => 'required|date|after:tanggal_sewa',
+            'catatan'         => 'nullable|max:500',
         ]);
 
         $mobil = DB::table('mobil')->where('id_mobil', $request->id_mobil)->first();
@@ -49,29 +50,29 @@ class BookingController extends Controller
 
         $tglSewa    = new \DateTime($request->tanggal_sewa);
         $tglKembali = new \DateTime($request->tanggal_kembali);
-        $hari       = $tglSewa->diff($tglKembali)->days;
-        $hari       = max($hari, 1);
-        $total      = $hari * $mobil->harga_sewa;
+        $durasi     = max($tglSewa->diff($tglKembali)->days, 1);
+        $total      = $durasi * $mobil->harga_sewa;
 
-        $data = [
-            'mobil'          => $mobil,
-            'tanggal_sewa'   => $request->tanggal_sewa,
-            'tanggal_kembali'=> $request->tanggal_kembali,
-            'hari'           => $hari,
-            'total'          => $total,
-        ];
-
-        return view('pelanggan.konfirmasi', $data);
+        return view('pelanggan.konfirmasi', [
+            'mobil'           => $mobil,
+            'tanggal_sewa'    => $request->tanggal_sewa,
+            'tanggal_kembali' => $request->tanggal_kembali,
+            'durasi'          => $durasi,
+            'total'           => $total,
+            'catatan'         => $request->catatan,
+        ]);
     }
 
     // Simpan Data Sementara — Insert Data Penyewaan (status: Pending)
     public function simpan(Request $request)
     {
         $request->validate([
-            'id_mobil'       => 'required|integer',
-            'tanggal_sewa'   => 'required|date',
-            'tanggal_kembali'=> 'required|date|after:tanggal_sewa',
-            'total_biaya'    => 'required|integer|min:1',
+            'id_mobil'        => 'required|integer',
+            'tanggal_sewa'    => 'required|date',
+            'tanggal_kembali' => 'required|date|after:tanggal_sewa',
+            'total_biaya'     => 'required|numeric|min:1',
+            'durasi_hari'     => 'required|integer|min:1',
+            'catatan'         => 'nullable|max:500',
         ]);
 
         $mobil = DB::table('mobil')->where('id_mobil', $request->id_mobil)->first();
@@ -86,10 +87,12 @@ class BookingController extends Controller
             'tanggal_sewa'    => $request->tanggal_sewa,
             'tanggal_kembali' => $request->tanggal_kembali,
             'total_biaya'     => $request->total_biaya,
+            'durasi_hari'     => $request->durasi_hari,
+            'catatan'         => $request->catatan,
             'status'          => 'pending',
+            'created_at'      => now(),
         ], 'id_sewa');
 
-        // Phase 3: redirect ke halaman pembayaran
         return redirect()->route('pelanggan.bayar', $idSewa);
     }
 

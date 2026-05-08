@@ -23,9 +23,15 @@
             <div class="card-body">
                 <h5>Mobil Dipilih</h5>
                 <hr>
+                @if($mobil->foto_mobil)
+                    <img src="{{ $mobil->foto_mobil }}" class="img-fluid rounded mb-2"
+                         style="max-height:160px; object-fit:cover; width:100%;"
+                         onerror="this.style.display='none'">
+                @endif
                 <p class="mb-1"><strong>{{ $mobil->nama_mobil }}</strong></p>
-                <p class="text-muted mb-1">Merek: {{ $mobil->merek }}</p>
-                <p class="text-muted mb-1">Plat: {{ $mobil->plat_nomor }}</p>
+                <p class="text-muted small mb-1">{{ $mobil->merek }} • {{ $mobil->tahun_pembuatan }} • {{ $mobil->warna }}</p>
+                <p class="text-muted small mb-1">Plat: {{ $mobil->plat_nomor }}</p>
+                <p class="text-muted small mb-1">👥 {{ $mobil->kapasitas_penumpang }} penumpang</p>
                 <h4 class="text-primary mt-3">Rp {{ number_format($mobil->harga_sewa) }}<small class="text-muted">/hari</small></h4>
             </div>
         </div>
@@ -50,6 +56,11 @@
                         <input type="date" name="tanggal_kembali" class="form-control"
                                min="{{ date('Y-m-d', strtotime('+1 day')) }}"
                                value="{{ old('tanggal_kembali', date('Y-m-d', strtotime('+1 day'))) }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Catatan <small class="text-muted">(opsional)</small></label>
+                        <textarea name="catatan" class="form-control" rows="2"
+                                  placeholder="Permintaan khusus, lokasi pickup, dll">{{ old('catatan') }}</textarea>
                     </div>
 
                     <div class="d-flex justify-content-between">

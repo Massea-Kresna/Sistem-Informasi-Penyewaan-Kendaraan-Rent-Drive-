@@ -16,7 +16,9 @@
             <th>Plat</th>
             <th>Tgl Sewa</th>
             <th>Tgl Kembali</th>
+            <th>Durasi</th>
             <th>Status</th>
+            <th>Metode Bayar</th>
             <th>Total</th>
             <th>Aksi</th>
         </tr>
@@ -30,6 +32,7 @@
             <td>{{ $d->plat_nomor }}</td>
             <td>{{ $d->tanggal_sewa }}</td>
             <td>{{ $d->tanggal_kembali ?? '-' }}</td>
+            <td>{{ $d->durasi_hari ?? '-' }} hari</td>
             <td>
                 @php
                     $badge = [
@@ -41,8 +44,14 @@
                 @endphp
                 <span class="badge bg-{{ $badge }}">{{ $d->status }}</span>
             </td>
+            <td>
+                @if($d->metode_pembayaran)
+                    <span class="badge bg-light text-dark">{{ ucfirst($d->metode_pembayaran) }}</span>
+                @else - @endif
+            </td>
             <td>{{ $d->total_biaya ? 'Rp ' . number_format($d->total_biaya) : '-' }}</td>
             <td>
+                <a href="{{ route('penyewaan.detail', $d->id_sewa) }}" class="btn btn-info btn-sm">Detail</a>
                 @if($d->status == 'dibayar')
                     <form method="POST" action="{{ route('penyewaan.kembali', $d->id_sewa) }}" style="display:inline">
                         @csrf
@@ -51,12 +60,12 @@
                 @endif
                 <form method="POST" action="{{ route('penyewaan.delete', $d->id_sewa) }}" style="display:inline">
                     @csrf
-                    <button onclick="return confirm('Hapus data penyewaan ini?')" class="btn btn-danger btn-sm">Hapus</button>
+                    <button onclick="return confirm('Hapus permanen data ini?')" class="btn btn-danger btn-sm">Hapus</button>
                 </form>
             </td>
         </tr>
     @empty
-        <tr><td colspan="9" class="text-center text-muted">Belum ada data penyewaan</td></tr>
+        <tr><td colspan="11" class="text-center text-muted">Belum ada data penyewaan</td></tr>
     @endforelse
     </tbody>
 </table>
