@@ -67,8 +67,6 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/admin/pelanggan',              [PelangganController::class, 'index'])->name('pelanggan.index');
     Route::get('/admin/pelanggan/add',          [PelangganController::class, 'create'])->name('pelanggan.create');
     Route::post('/admin/pelanggan/store',       [PelangganController::class, 'store'])->name('pelanggan.store');
-    Route::get('/admin/pelanggan/edit/{id}',    [PelangganController::class, 'edit'])->name('pelanggan.edit');
-    Route::post('/admin/pelanggan/update/{id}', [PelangganController::class, 'update'])->name('pelanggan.update');
     Route::post('/admin/pelanggan/delete/{id}', [PelangganController::class, 'delete'])->name('pelanggan.delete');
 
     // Penyewaan

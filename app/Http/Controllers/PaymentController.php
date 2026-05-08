@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PaymentController extends Controller
 {
@@ -53,11 +54,16 @@ class PaymentController extends Controller
 
         $request->validate([
             'metode_pembayaran' => 'required|in:transfer,cash',
-            'bukti_transfer'    => 'nullable|url|max:500',
+            'bukti_transfer'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'hasil'             => 'required|in:sukses,gagal',
         ]);
 
         $hasil = $request->input('hasil');
+
+        $buktiPath = null;
+        if ($request->hasFile('bukti_transfer')) {
+            $buktiPath = $request->file('bukti_transfer')->store('bukti_transfer', 'public');
+        }
 
         // Insert ke tabel pembayaran
         DB::table('pembayaran')->insert([
@@ -65,7 +71,7 @@ class PaymentController extends Controller
             'jumlah_bayar'      => $sewa->total_biaya,
             'metode_pembayaran' => $request->metode_pembayaran,
             'tanggal_bayar'     => date('Y-m-d'),
-            'bukti_transfer'    => $request->bukti_transfer,
+            'bukti_transfer'    => $buktiPath,
             'status_pembayaran' => $hasil === 'sukses' ? 'berhasil' : 'gagal',
             'created_at'        => now(),
         ]);

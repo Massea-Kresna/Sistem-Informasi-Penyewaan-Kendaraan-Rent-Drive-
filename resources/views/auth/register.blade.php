@@ -23,7 +23,7 @@
 
     <div class="card shadow-sm">
         <div class="card-body">
-            <form method="POST" action="{{ route('register.submit') }}">
+            <form method="POST" action="{{ route('register.submit') }}" enctype="multipart/form-data">
                 @csrf
 
                 <h6 class="text-muted mb-3">Akun</h6>
@@ -77,10 +77,8 @@
                     <textarea name="alamat" class="form-control" rows="2" required>{{ old('alamat') }}</textarea>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">URL Foto KTP <small class="text-muted">(opsional)</small></label>
-                    <input type="url" name="foto_ktp" class="form-control"
-                           placeholder="https://example.com/ktp.jpg"
-                           value="{{ old('foto_ktp') }}">
+                    <label class="form-label">Foto KTP <small class="text-muted">(opsional, JPG/PNG max 2MB)</small></label>
+                    <input type="file" name="foto_ktp" class="form-control" accept="image/jpeg,image/png">
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">Daftar</button>

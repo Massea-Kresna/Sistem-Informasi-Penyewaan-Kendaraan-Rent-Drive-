@@ -22,7 +22,13 @@
                     <tr><th>Alamat</th><td>{{ $sewa->alamat }}</td></tr>
                     @if($sewa->foto_ktp)
                         <tr><th>Foto KTP</th>
-                            <td><a href="{{ $sewa->foto_ktp }}" target="_blank">Lihat KTP →</a></td>
+                            <td>
+                                <a href="{{ asset('storage/' . $sewa->foto_ktp) }}" target="_blank">Lihat KTP →</a>
+                                <div class="mt-2">
+                                    <img src="{{ asset('storage/' . $sewa->foto_ktp) }}" alt="KTP"
+                                         style="max-height:100px;">
+                                </div>
+                            </td>
                         </tr>
                     @endif
                 </table>
@@ -34,7 +40,7 @@
             <div class="card-header bg-info text-white"><strong>Data Mobil</strong></div>
             <div class="card-body">
                 @if($sewa->foto_mobil)
-                    <img src="{{ $sewa->foto_mobil }}" class="img-fluid rounded mb-2"
+                    <img src="{{ asset('storage/' . $sewa->foto_mobil) }}" class="img-fluid rounded mb-2"
                          style="max-height:160px; object-fit:cover; width:100%;">
                 @endif
                 <table class="table table-sm mb-0">
@@ -108,16 +114,17 @@
                         </td>
                         <td>
                             @if($p->bukti_transfer)
-                                <a href="{{ $p->bukti_transfer }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <a href="{{ asset('storage/' . $p->bukti_transfer) }}" target="_blank"
+                                   class="btn btn-sm btn-outline-primary">
                                     🔗 Lihat Bukti
                                 </a>
                                 <div class="mt-2">
-                                    <img src="{{ $p->bukti_transfer }}" alt="Bukti"
+                                    <img src="{{ asset('storage/' . $p->bukti_transfer) }}" alt="Bukti"
                                          style="max-width:120px; max-height:80px; object-fit:cover;"
                                          onerror="this.style.display='none'">
                                 </div>
                             @else
-                                <span class="text-muted">- (cash / belum upload)</span>
+                                <span class="text-muted">- (cash / belum diunggah)</span>
                             @endif
                         </td>
                     </tr>
