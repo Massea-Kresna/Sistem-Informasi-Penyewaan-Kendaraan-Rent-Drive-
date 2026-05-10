@@ -12,10 +12,12 @@
         <tr>
             <th>No</th>
             <th>Nama</th>
+            <th>Email</th>
             <th>No KTP</th>
             <th>No HP</th>
+            <th>Tgl Lahir</th>
             <th>Alamat</th>
-            <th>Aksi</th>
+            <th>Opsi</th>
         </tr>
     </thead>
     <tbody>
@@ -23,17 +25,17 @@
         <tr>
             <td>{{ $i+1 }}</td>
             <td>{{ $d->nama }}</td>
+            <td>{{ $d->email }}</td>
             <td>{{ $d->no_ktp }}</td>
             <td>{{ $d->no_hp }}</td>
-            <td>{{ $d->alamat }}</td>
+            <td>{{ $d->tanggal_lahir }}</td>
+            <td>{{ Str::limit($d->alamat, 30) }}</td>
             <td>
-                <a href="{{ route('pelanggan.edit', $d->id_pelanggan) }}" 
-                   class="btn btn-warning btn-sm">Ubah</a>
-                <form method="POST" 
-                      action="{{ route('pelanggan.delete', $d->id_pelanggan) }}" 
+                <form method="POST"
+                      action="{{ route('pelanggan.delete', $d->id_pelanggan) }}"
                       style="display:inline">
                     @csrf
-                    <button onclick="return confirm('Hapus data ini?')" 
+                    <button onclick="return confirm('Hapus permanen data pelanggan ini beserta seluruh riwayat sewa-nya?')"
                             class="btn btn-danger btn-sm">Hapus</button>
                 </form>
             </td>

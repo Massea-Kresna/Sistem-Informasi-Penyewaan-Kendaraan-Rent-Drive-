@@ -11,9 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Mendaftarkan alias middleware custom kita
         $middleware->alias([
-            'auth.custom' => \App\Http\Middleware\CheckPelangganSession::class,
+            'pelanggan.auth' => \App\Http\Middleware\PelangganAuth::class,
+            'admin.auth'     => \App\Http\Middleware\AdminAuth::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

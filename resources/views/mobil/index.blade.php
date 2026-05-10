@@ -10,17 +10,38 @@
 <table class="table table-bordered table-hover">
     <thead class="table-primary">
         <tr>
-            <th>No</th><th>Nama Mobil</th><th>Merek</th>
-            <th>Plat</th><th>Harga/Hari</th><th>Status</th><th>Aksi</th>
+            <th>No</th>
+            <th>Foto</th>
+            <th>Nama Mobil</th>
+            <th>Merek</th>
+            <th>Tahun</th>
+            <th>Warna</th>
+            <th>Plat</th>
+            <th>Kapasitas</th>
+            <th>Harga/Hari</th>
+            <th>Status</th>
+            <th>Opsi</th>
         </tr>
     </thead>
     <tbody>
     @foreach($datas as $i => $d)
         <tr>
             <td>{{ $i+1 }}</td>
+            <td>
+                @if($d->foto_mobil)
+                    <img src="{{ asset('storage/' . $d->foto_mobil) }}" alt=""
+                         style="width:60px; height:40px; object-fit:cover;"
+                         onerror="this.style.display='none'">
+                @else
+                    <span class="text-muted">-</span>
+                @endif
+            </td>
             <td>{{ $d->nama_mobil }}</td>
             <td>{{ $d->merek }}</td>
+            <td>{{ $d->tahun_pembuatan }}</td>
+            <td>{{ $d->warna }}</td>
             <td>{{ $d->plat_nomor }}</td>
+            <td>{{ $d->kapasitas_penumpang }}</td>
             <td>Rp {{ number_format($d->harga_sewa) }}</td>
             <td>
                 <span class="badge bg-{{ $d->status=='tersedia' ? 'success' : 'danger' }}">

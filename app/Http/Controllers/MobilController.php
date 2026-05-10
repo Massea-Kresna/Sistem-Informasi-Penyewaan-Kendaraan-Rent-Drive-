@@ -2,76 +2,113 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class MobilController extends Controller {
 
-    // READ
     public function index() {
         $datas = DB::select('SELECT * FROM mobil');
         return view('mobil.index')->with('datas', $datas);
     }
 
-    // CREATE - form
     public function create() {
         return view('mobil.add');
     }
 
-    // CREATE - simpan
     public function store(Request $request) {
         $request->validate([
-            'nama_mobil'  => 'required',
-            'merek'       => 'required',
-            'plat_nomor'  => 'required',
-            'harga_sewa'  => 'required|numeric',
+            'nama_mobil'          => 'required|max:100',
+            'merek'               => 'required|max:100',
+            'plat_nomor'          => 'required|max:20|unique:mobil,plat_nomor',
+            'harga_sewa'          => 'required|numeric|min:0',
+            'tahun_pembuatan'     => 'required|integer|min:1900|max:' . (date('Y') + 1),
+            'warna'               => 'required|max:50',
+            'kapasitas_penumpang' => 'required|integer|min:1|max:50',
+            'foto_mobil'          => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'deskripsi'           => 'nullable|max:1000',
         ]);
-        DB::insert(
-            'INSERT INTO mobil(nama_mobil, merek, plat_nomor, harga_sewa)
-             VALUES (:nama_mobil, :merek, :plat_nomor, :harga_sewa)',
-            [
-                'nama_mobil' => $request->nama_mobil,
-                'merek'      => $request->merek,
-                'plat_nomor' => $request->plat_nomor,
-                'harga_sewa' => $request->harga_sewa,
-            ]
-        );
+
+        $fotoPath = null;
+        if ($request->hasFile('foto_mobil')) {
+            $fotoPath = $request->file('foto_mobil')->store('foto_mobil', 'public');
+        }
+
+        DB::table('mobil')->insert([
+            'nama_mobil'          => $request->nama_mobil,
+            'merek'               => $request->merek,
+            'plat_nomor'          => $request->plat_nomor,
+            'harga_sewa'          => $request->harga_sewa,
+            'tahun_pembuatan'     => $request->tahun_pembuatan,
+            'warna'               => $request->warna,
+            'kapasitas_penumpang' => $request->kapasitas_penumpang,
+            'foto_mobil'          => $fotoPath,
+            'deskripsi'           => $request->deskripsi,
+            'status'              => 'tersedia',
+        ]);
+
         return redirect()->route('mobil.index')
                          ->with('success', 'Data mobil berhasil ditambahkan');
     }
 
-    // UPDATE - form
     public function edit($id) {
         $data = DB::table('mobil')->where('id_mobil', $id)->first();
         return view('mobil.edit')->with('data', $data);
     }
 
-    // UPDATE - simpan
     public function update($id, Request $request) {
         $request->validate([
-            'nama_mobil' => 'required',
-            'merek'      => 'required',
-            'plat_nomor' => 'required',
-            'harga_sewa' => 'required|numeric',
+            'nama_mobil'          => 'required|max:100',
+            'merek'               => 'required|max:100',
+            'plat_nomor'          => 'required|max:20|unique:mobil,plat_nomor,' . $id . ',id_mobil',
+            'harga_sewa'          => 'required|numeric|min:0',
+            'tahun_pembuatan'     => 'required|integer|min:1900|max:' . (date('Y') + 1),
+            'warna'               => 'required|max:50',
+            'kapasitas_penumpang' => 'required|integer|min:1|max:50',
+            'foto_mobil'          => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'deskripsi'           => 'nullable|max:1000',
         ]);
-        DB::update(
-            'UPDATE mobil SET nama_mobil=:nama_mobil, merek=:merek,
-             plat_nomor=:plat_nomor, harga_sewa=:harga_sewa
-             WHERE id_mobil=:id',
-            [
-                'id'         => $id,
-                'nama_mobil' => $request->nama_mobil,
-                'merek'      => $request->merek,
-                'plat_nomor' => $request->plat_nomor,
-                'harga_sewa' => $request->harga_sewa,
-            ]
-        );
+
+        $data = [
+            'nama_mobil'          => $request->nama_mobil,
+            'merek'               => $request->merek,
+            'plat_nomor'          => $request->plat_nomor,
+            'harga_sewa'          => $request->harga_sewa,
+            'tahun_pembuatan'     => $request->tahun_pembuatan,
+            'warna'               => $request->warna,
+            'kapasitas_penumpang' => $request->kapasitas_penumpang,
+            'deskripsi'           => $request->deskripsi,
+        ];
+
+        if ($request->hasFile('foto_mobil')) {
+            $old = DB::table('mobil')->where('id_mobil', $id)->value('foto_mobil');
+            if ($old) Storage::disk('public')->delete($old);
+            $data['foto_mobil'] = $request->file('foto_mobil')->store('foto_mobil', 'public');
+        }
+
+        DB::table('mobil')->where('id_mobil', $id)->update($data);
+
         return redirect()->route('mobil.index')
                          ->with('success', 'Data mobil berhasil diubah');
     }
 
-    // DELETE
     public function delete($id) {
-        DB::delete('DELETE FROM mobil WHERE id_mobil=:id', ['id' => $id]);
+        // Hard delete cascade — hapus semua data terkait di database
+        $foto = DB::table('mobil')->where('id_mobil', $id)->value('foto_mobil');
+
+        $sewaIds = DB::table('penyewaan')->where('id_mobil', $id)->pluck('id_sewa');
+        if ($sewaIds->isNotEmpty()) {
+            // Hapus file bukti transfer terkait
+            $buktis = DB::table('pembayaran')->whereIn('id_sewa', $sewaIds)->pluck('bukti_transfer');
+            foreach ($buktis as $b) if ($b) Storage::disk('public')->delete($b);
+
+            DB::table('pembayaran')->whereIn('id_sewa', $sewaIds)->delete();
+            DB::table('penyewaan')->whereIn('id_sewa', $sewaIds)->delete();
+        }
+        DB::table('mobil')->where('id_mobil', $id)->delete();
+
+        if ($foto) Storage::disk('public')->delete($foto);
+
         return redirect()->route('mobil.index')
-                         ->with('success', 'Data mobil berhasil dihapus');
+                         ->with('success', 'Data mobil dan semua data terkait berhasil dihapus permanen.');
     }
 }

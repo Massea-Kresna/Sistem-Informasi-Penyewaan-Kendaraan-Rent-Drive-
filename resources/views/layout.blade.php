@@ -3,52 +3,55 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Rental Mobil - Kel04</title>
+    <title>Admin - Rent Drive</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('dashboard') }}">🚗 Rental Mobil</a>
+        <a class="navbar-brand" href="{{ route('admin.dashboard') }}">🔧 Rent Drive Admin</a>
         <div class="collapse navbar-collapse">
-            
             <ul class="navbar-nav me-auto">
-                @if(Session::has('pelanggan_id'))
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('mobil.index') }}">Data Mobil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('pelanggan.index') }}">Data Pelanggan</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('dashboard') }}">Penyewaan / Dashboard</a>
-                    </li>
-                @endif
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('mobil.index') }}">Data Mobil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('pelanggan.index') }}">Data Pelanggan</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('penyewaan.index') }}">Data Penyewaan</a>
+                </li>
             </ul>
-
-            <ul class="navbar-nav ms-auto">
-                @if(Session::has('pelanggan_id'))
+            @if(session()->has('admin_id'))
+                <ul class="navbar-nav">
                     <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                        <span class="navbar-text text-white me-3">
+                            <strong>{{ session('admin_nama') }}</strong>
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <form method="POST" action="{{ route('admin.logout') }}" class="d-inline">
                             @csrf
-                            <button type="submit" class="btn btn-danger btn-sm mt-1">Logout</button>
+                            <button class="btn btn-outline-light btn-sm">Logout</button>
                         </form>
                     </li>
-                @else
-                    <li class="nav-item">
-                        <a class="btn btn-light btn-sm mt-1" href="{{ route('login') }}">Login</a>
-                    </li>
-                @endif
-            </ul>
-            
+                </ul>
+            @endif
         </div>
     </div>
 </nav>
-
 <div class="container mt-4">
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
     @yield('content')
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
