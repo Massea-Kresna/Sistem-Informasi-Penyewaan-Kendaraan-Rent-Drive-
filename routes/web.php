@@ -13,7 +13,10 @@ use App\Http\Controllers\PaymentController;
 Route::get('/', function () {
     if (session()->has('admin_id'))     return redirect()->route('admin.dashboard');
     if (session()->has('pelanggan_id')) return redirect()->route('pelanggan.dashboard');
-    return redirect()->route('login');
+    return redirect()->route('login'); //Langsung login
+
+    //Kalo belum login, tampilkan landing page
+    // return view('welcome');
 })->name('home');
 
 // ===== AUTH PELANGGAN =====
