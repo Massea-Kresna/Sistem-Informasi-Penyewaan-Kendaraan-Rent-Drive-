@@ -1,131 +1,110 @@
 @extends('layout')
+
 @section('content')
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ route('penyewaan.index') }}">Data Penyewaan</a></li>
-        <li class="breadcrumb-item active">Detail #{{ $sewa->id_sewa }}</li>
-    </ol>
-</nav>
+<style>
+    .page-header { padding: 2rem 3rem; background: var(--white); border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+    .page-title { font-size: 1.4rem; font-weight: 300; color: var(--ink); }
+    .btn-back { background: transparent; border: 1px solid var(--line); padding: 8px 16px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); text-decoration: none; }
 
-<h4>Detail Penyewaan #{{ str_pad($sewa->id_sewa, 6, '0', STR_PAD_LEFT) }}</h4>
+    .content-wrapper { padding: 3rem; max-width: 1200px; margin: 0 auto; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+    @media (max-width: 900px) { .detail-grid { grid-template-columns: 1fr; } }
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card mb-3">
-            <div class="card-header bg-primary text-white"><strong>Data Pelanggan</strong></div>
-            <div class="card-body">
-                <table class="table table-sm mb-0">
-                    <tr><th width="35%">Nama</th><td>{{ $sewa->nama_pelanggan }}</td></tr>
-                    <tr><th>Email</th><td>{{ $sewa->email }}</td></tr>
-                    <tr><th>No KTP</th><td>{{ $sewa->no_ktp }}</td></tr>
-                    <tr><th>No HP</th><td>{{ $sewa->no_hp }}</td></tr>
-                    <tr><th>Alamat</th><td>{{ $sewa->alamat }}</td></tr>
-                    @if($sewa->foto_ktp)
-                        <tr><th>Foto KTP</th>
-                            <td>
-                                <a href="{{ asset('storage/' . $sewa->foto_ktp) }}" target="_blank">Lihat KTP →</a>
-                                <div class="mt-2">
-                                    <img src="{{ asset('storage/' . $sewa->foto_ktp) }}" alt="KTP"
-                                         style="max-height:100px;">
-                                </div>
-                            </td>
-                        </tr>
-                    @endif
-                </table>
+    .info-card { background: var(--white); border: 1px solid var(--line); padding: 2rem; }
+    .card-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; color: var(--blue-deep); margin-bottom: 1.5rem; display: block; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+    
+    .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--line); font-size: 13px; }
+    .data-row:last-child { border-bottom: none; }
+    .label-text { color: var(--ink-muted); }
+    .value-text { font-weight: 500; text-align: right; }
+
+    .badge-status { padding: 4px 10px; font-size: 10px; font-weight: 600; text-transform: uppercase; border-radius: 99px; }
+    .bg-warning { background: var(--amber-soft); color: var(--amber); }
+    .bg-info { background: var(--blue-soft); color: var(--blue-accent); }
+    .bg-secondary { background: var(--bg); color: var(--ink-muted); }
+    .bg-danger { background: var(--red-soft); color: var(--red); }
+
+    .table-pay { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 12.5px; }
+    .table-pay th { background: var(--bg); padding: 12px; text-align: left; color: var(--ink-muted); text-transform: uppercase; font-size: 10px; letter-spacing: 0.1em; border-bottom: 1px solid var(--line); }
+    .table-pay td { padding: 12px; border-bottom: 1px solid var(--line); }
+</style>
+
+<div class="page-header">
+    <h2 class="page-title">Detail Penyewaan <strong>#{{ str_pad($sewa->id_sewa, 6, '0', STR_PAD_LEFT) }}</strong></h2>
+    <a href="{{ route('penyewaan.index') }}" class="btn-back">← Kembali</a>
+</div>
+
+<div class="content-wrapper">
+    <div class="detail-grid">
+        <div class="info-card">
+            <span class="card-label">Informasi Pelanggan</span>
+            <div class="data-row"><span class="label-text">Nama</span><span class="value-text">{{ $sewa->nama_pelanggan }}</span></div>
+            <div class="data-row"><span class="label-text">Email</span><span class="value-text">{{ $sewa->email }}</span></div>
+            <div class="data-row"><span class="label-text">No KTP</span><span class="value-text">{{ $sewa->no_ktp }}</span></div>
+            <div class="data-row"><span class="label-text">No HP</span><span class="value-text">{{ $sewa->no_hp }}</span></div>
+        </div>
+
+        <div class="info-card">
+            <span class="card-label">Spesifikasi Armada</span>
+            <div class="data-row"><span class="label-text">Mobil</span><span class="value-text">{{ $sewa->nama_mobil }}</span></div>
+            <div class="data-row"><span class="label-text">Plat Nomor</span><span class="value-text" style="font-family: monospace;">{{ $sewa->plat_nomor }}</span></div>
+            <div class="data-row"><span class="label-text">Warna / Tahun</span><span class="value-text">{{ $sewa->warna }} / {{ $sewa->tahun_pembuatan }}</span></div>
+            <div class="data-row"><span class="label-text">Tarif / Hari</span><span class="value-text">Rp {{ number_format($sewa->harga_sewa) }}</span></div>
+        </div>
+    </div>
+
+    <div class="info-card" style="margin-bottom: 2rem;">
+        <span class="card-label">Rincian Reservasi</span>
+        <div class="detail-grid" style="gap: 4rem; margin-bottom: 0;">
+            <div>
+                <div class="data-row"><span class="label-text">Status Sewa</span>
+                    <span>
+                        @php $b = ['pending'=>'warning','dibayar'=>'info','selesai'=>'secondary','dibatalkan'=>'danger'][$sewa->status] ?? 'light'; @endphp
+                        <span class="badge-status bg-{{ $b }}">{{ $sewa->status }}</span>
+                    </span>
+                </div>
+                <div class="data-row"><span class="label-text">Tanggal Sewa</span><span class="value-text">{{ date('d M Y', strtotime($sewa->tanggal_sewa)) }}</span></div>
+                <div class="data-row"><span class="label-text">Tanggal Kembali</span><span class="value-text">{{ $sewa->tanggal_kembali ? date('d M Y', strtotime($sewa->tanggal_kembali)) : '-' }}</span></div>
+            </div>
+            <div>
+                <div class="data-row"><span class="label-text">Durasi</span><span class="value-text">{{ $sewa->durasi_hari }} Hari</span></div>
+                <div class="data-row"><span class="label-text">Total Biaya</span><span class="value-text" style="color: var(--blue-deep); font-weight: 600;">Rp {{ number_format($sewa->total_biaya) }}</span></div>
+                <div class="data-row"><span class="label-text">Dibuat Pada</span><span class="value-text">{{ date('d/m/Y H:i', strtotime($sewa->created_at)) }}</span></div>
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card mb-3">
-            <div class="card-header bg-info text-white"><strong>Data Mobil</strong></div>
-            <div class="card-body">
-                @if($sewa->foto_mobil)
-                    <img src="{{ asset('storage/' . $sewa->foto_mobil) }}" class="img-fluid rounded mb-2"
-                         style="max-height:160px; object-fit:cover; width:100%;">
-                @endif
-                <table class="table table-sm mb-0">
-                    <tr><th width="35%">Mobil</th><td>{{ $sewa->nama_mobil }}</td></tr>
-                    <tr><th>Merek</th><td>{{ $sewa->merek }}</td></tr>
-                    <tr><th>Tahun</th><td>{{ $sewa->tahun_pembuatan }}</td></tr>
-                    <tr><th>Warna</th><td>{{ $sewa->warna }}</td></tr>
-                    <tr><th>Plat</th><td>{{ $sewa->plat_nomor }}</td></tr>
-                    <tr><th>Kapasitas</th><td>{{ $sewa->kapasitas_penumpang }} penumpang</td></tr>
-                    <tr><th>Harga / Hari</th><td>Rp {{ number_format($sewa->harga_sewa) }}</td></tr>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="card mb-3">
-    <div class="card-header bg-success text-white"><strong>Detail Sewa</strong></div>
-    <div class="card-body">
-        <table class="table table-sm mb-0">
-            <tr><th width="20%">Status Sewa</th>
-                <td>
-                    @php
-                        $badge = ['pending'=>'warning','dibayar'=>'info','selesai'=>'secondary','dibatalkan'=>'danger'][$sewa->status] ?? 'light';
-                    @endphp
-                    <span class="badge bg-{{ $badge }}">{{ $sewa->status }}</span>
-                </td>
-            </tr>
-            <tr><th>Tanggal Sewa</th><td>{{ $sewa->tanggal_sewa }}</td></tr>
-            <tr><th>Tanggal Kembali</th><td>{{ $sewa->tanggal_kembali ?? '-' }}</td></tr>
-            <tr><th>Durasi</th><td>{{ $sewa->durasi_hari }} hari</td></tr>
-            <tr><th>Total Biaya</th>
-                <td><strong>Rp {{ number_format($sewa->total_biaya) }}</strong></td></tr>
-            @if($sewa->catatan)
-                <tr><th>Catatan</th><td>{{ $sewa->catatan }}</td></tr>
-            @endif
-            <tr><th>Dibuat</th><td>{{ $sewa->created_at }}</td></tr>
-        </table>
-    </div>
-</div>
-
-<div class="card mb-3">
-    <div class="card-header bg-warning"><strong>Riwayat Pembayaran</strong></div>
-    <div class="card-body">
+    <div class="info-card">
+        <span class="card-label">Riwayat Transaksi Pembayaran</span>
         @if(count($pembayaran) === 0)
-            <p class="text-muted mb-0">Belum ada pembayaran.</p>
+            <p style="text-align: center; color: var(--ink-muted); font-size: 13px; padding: 1rem;">Belum ada record pembayaran.</p>
         @else
-            <table class="table table-bordered">
-                <thead class="table-light">
+            <table class="table-pay">
+                <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Tgl Bayar</th>
+                        <th>ID Bayar</th>
+                        <th>Tanggal</th>
                         <th>Metode</th>
-                        <th>Jumlah</th>
+                        <th>Nominal</th>
                         <th>Status</th>
-                        <th>Bukti Transfer</th>
+                        <th>Bukti</th>
                     </tr>
                 </thead>
                 <tbody>
                 @foreach($pembayaran as $p)
                     <tr>
-                        <td>PAY-{{ str_pad($p->id_pembayaran, 6, '0', STR_PAD_LEFT) }}</td>
-                        <td>{{ $p->tanggal_bayar }}</td>
+                        <td style="font-family: monospace;">#PAY-{{ $p->id_pembayaran }}</td>
+                        <td>{{ date('d/m/Y', strtotime($p->tanggal_bayar)) }}</td>
                         <td>{{ ucfirst($p->metode_pembayaran) }}</td>
-                        <td>Rp {{ number_format($p->jumlah_bayar) }}</td>
+                        <td style="font-weight: 600;">Rp {{ number_format($p->jumlah_bayar) }}</td>
                         <td>
-                            @php
-                                $b = ['berhasil'=>'success','gagal'=>'danger','pending'=>'warning'][$p->status_pembayaran] ?? 'light';
-                            @endphp
-                            <span class="badge bg-{{ $b }}">{{ ucfirst($p->status_pembayaran) }}</span>
+                            @php $ps = ['berhasil'=>'success','gagal'=>'danger','pending'=>'warning'][$p->status_pembayaran] ?? 'light'; @endphp
+                            <span class="badge-status bg-{{ $ps }}">{{ $p->status_pembayaran }}</span>
                         </td>
                         <td>
                             @if($p->bukti_transfer)
-                                <a href="{{ asset('storage/' . $p->bukti_transfer) }}" target="_blank"
-                                   class="btn btn-sm btn-outline-primary">
-                                    🔗 Lihat Bukti
-                                </a>
-                                <div class="mt-2">
-                                    <img src="{{ asset('storage/' . $p->bukti_transfer) }}" alt="Bukti"
-                                         style="max-width:120px; max-height:80px; object-fit:cover;"
-                                         onerror="this.style.display='none'">
-                                </div>
-                            @else
-                                <span class="text-muted">- (cash / belum diunggah)</span>
-                            @endif
+                                <a href="{{ asset('storage/' . $p->bukti_transfer) }}" target="_blank" style="color: var(--blue-accent); text-decoration: none;">Lihat ↗</a>
+                            @else - @endif
                         </td>
                     </tr>
                 @endforeach
@@ -134,6 +113,4 @@
         @endif
     </div>
 </div>
-
-<a href="{{ route('penyewaan.index') }}" class="btn btn-secondary">← Kembali</a>
 @endsection
