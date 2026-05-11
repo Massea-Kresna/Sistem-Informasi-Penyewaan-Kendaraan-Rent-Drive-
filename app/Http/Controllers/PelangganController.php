@@ -16,6 +16,67 @@ class PelangganController extends Controller {
         return view('pelanggan.add');
     }
 
+    public function edit($id)
+    {
+        // Ambil data pelanggan berdasarkan id_pelanggan
+        // Sesuaikan nama Model/Tabel dengan yang kamu pakai (misal pakai DB query builder):
+        $data = DB::table('pelanggan')->where('id_pelanggan', $id)->first();
+        
+        if (!$data) {
+            return redirect()->route('pelanggan.index')->with('error', 'Data tidak ditemukan!');
+        }
+
+        return view('pelanggan.edit', compact('data'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        // 1. Validasi input
+        $request->validate([
+            'nama' => 'required',
+            'email' => 'required|email',
+            'tanggal_lahir' => 'required|date',
+            'no_ktp' => 'required',
+            'no_hp' => 'required',
+            'alamat' => 'required',
+            'foto_ktp' => 'nullable|image|mimes:jpeg,png|max:2048',
+        ]);
+
+        // 2. Ambil data pelanggan saat ini untuk mengecek foto lama
+        $pelanggan = DB::table('pelanggan')->where('id_pelanggan', $id)->first();
+
+        // 3. Siapkan array data yang akan diupdate
+        $updateData = [
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'no_ktp' => $request->no_ktp,
+            'no_hp' => $request->no_hp,
+            'alamat' => $request->alamat,
+        ];
+
+        // 4. Jika kolom password diisi, enkripsi dan masukkan ke array update
+        if ($request->filled('password')) {
+            $updateData['password'] = Hash::make($request->password);
+        }
+
+        // 5. Jika ada file foto_ktp baru yang diunggah
+        if ($request->hasFile('foto_ktp')) {
+            // Hapus foto lama jika ada
+            if ($pelanggan->foto_ktp && Storage::disk('public')->exists($pelanggan->foto_ktp)) {
+                Storage::disk('public')->delete($pelanggan->foto_ktp);
+            }
+            // Simpan foto baru
+            $updateData['foto_ktp'] = $request->file('foto_ktp')->store('foto_ktp', 'public');
+        }
+
+        // 6. Eksekusi update ke database
+        DB::table('pelanggan')->where('id_pelanggan', $id)->update($updateData);
+
+        // 7. Kembalikan ke halaman daftar dengan pesan sukses
+        return redirect()->route('pelanggan.index')->with('success', 'Data pelanggan berhasil diperbarui!');
+    }
+
     public function store(Request $request) {
         $request->validate([
             'nama'          => 'required|max:150',
