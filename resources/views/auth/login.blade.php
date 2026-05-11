@@ -21,7 +21,7 @@
         :root {
             --blue-deep:   #0f2d5e;
             --blue-mid:    #1a4080;
-            --blue-accent: #2563eb;
+            --blue-accent: #2563eb; 
             --blue-soft:   #dbeafe;
             --ink:         #0d1b2a;
             --ink-muted:   #5a6e85;
@@ -30,7 +30,7 @@
         }
 
         html, body { height: 100%; }
-
+/* 0f2d5e */
         body {
             font-family: 'Sora', sans-serif;
             font-weight: 400;
