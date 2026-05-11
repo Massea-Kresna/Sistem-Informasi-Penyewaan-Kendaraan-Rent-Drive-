@@ -2,39 +2,74 @@
 @section('title', 'Konfirmasi Pesanan')
 
 @section('content')
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ route('pelanggan.mobil') }}">Daftar Mobil</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('pelanggan.pilih', $mobil->id_mobil) }}">Form Penyewaan</a></li>
-        <li class="breadcrumb-item active">Konfirmasi</li>
-    </ol>
-</nav>
+<style>
+    .page-header { padding: 2rem 3rem; background: var(--white); border-bottom: 1px solid var(--line); }
+    .page-title { font-size: 1.5rem; font-weight: 300; color: var(--ink); }
+    
+    .confirm-wrapper { padding: 3rem; max-width: 800px; margin: 0 auto; }
+    .confirm-card { background: var(--white); border: 1px solid var(--line); padding: 3rem; }
+    
+    .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--blue-deep); margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line); }
 
-<h4 class="mb-3">Konfirmasi Pesanan</h4>
-<p class="text-muted">Periksa kembali detail pesanan Anda. Setelah dikonfirmasi, pesanan akan disimpan dengan status menunggu pembayaran.</p>
+    .data-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed var(--line); font-size: 13.5px; }
+    .data-row:last-child { border-bottom: none; }
+    .data-label { color: var(--ink-muted); font-weight: 400; }
+    .data-value { color: var(--ink); font-weight: 500; text-align: right; }
+    
+    .total-row { display: flex; justify-content: space-between; align-items: center; background: var(--bg); padding: 1.5rem; border: 1px solid var(--line); margin-top: 1.5rem; }
+    .total-label { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink); }
+    .total-value { font-size: 1.5rem; font-weight: 600; color: var(--blue-deep); }
 
-<div class="card">
-    <div class="card-body">
-        <h5 class="mb-3">Ringkasan Pesanan</h5>
+    .form-actions { display: flex; gap: 1rem; margin-top: 2.5rem; align-items: center; justify-content: space-between; }
+    .btn-submit { background: var(--blue-deep); color: var(--white); padding: 14px 24px; font-family: 'Sora'; font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; border: none; cursor: pointer; transition: 0.2s; }
+    .btn-submit:hover { background: var(--blue-mid); }
+    .btn-cancel { color: var(--ink-muted); font-size: 12px; font-weight: 500; text-transform: uppercase; text-decoration: none; letter-spacing: 0.05em; transition: 0.2s; border: 1px solid var(--line); padding: 13px 20px; }
+    .btn-cancel:hover { color: var(--ink); background: var(--bg); }
+</style>
 
-        <table class="table">
-            <tr><th width="35%">Mobil</th>
-                <td>{{ $mobil->nama_mobil }} ({{ $mobil->merek }} {{ $mobil->tahun_pembuatan }})</td></tr>
-            <tr><th>Warna</th>               <td>{{ $mobil->warna }}</td></tr>
-            <tr><th>Plat Nomor</th>          <td>{{ $mobil->plat_nomor }}</td></tr>
-            <tr><th>Kapasitas</th>           <td>{{ $mobil->kapasitas_penumpang }} penumpang</td></tr>
-            <tr><th>Harga per Hari</th>      <td>Rp {{ number_format($mobil->harga_sewa) }}</td></tr>
-            <tr><th>Tanggal Sewa</th>        <td>{{ $tanggal_sewa }}</td></tr>
-            <tr><th>Tanggal Kembali</th>     <td>{{ $tanggal_kembali }}</td></tr>
-            <tr><th>Durasi</th>              <td>{{ $durasi }} hari</td></tr>
-            @if($catatan)
-                <tr><th>Catatan</th>          <td>{{ $catatan }}</td></tr>
-            @endif
-            <tr class="table-primary">
-                <th><h5 class="mb-0">Total Biaya</h5></th>
-                <td><h5 class="mb-0 text-primary">Rp {{ number_format($total) }}</h5></td>
-            </tr>
-        </table>
+<div class="page-header">
+    <h2 class="page-title">Konfirmasi <strong>Reservasi</strong></h2>
+</div>
+
+<div class="confirm-wrapper">
+    <div class="confirm-card">
+        <h3 class="section-label">Ringkasan Pesanan Anda</h3>
+        
+        <div class="data-row">
+            <span class="data-label">Armada Terpilih</span>
+            <span class="data-value">{{ $mobil->nama_mobil }} ({{ $mobil->merek }} {{ $mobil->tahun_pembuatan }})</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">Warna / Plat Nomor</span>
+            <span class="data-value">{{ $mobil->warna }} / <span style="font-family: monospace;">{{ $mobil->plat_nomor }}</span></span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">Kapasitas Maksimal</span>
+            <span class="data-value">{{ $mobil->kapasitas_penumpang }} Penumpang</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">Tarif Dasar</span>
+            <span class="data-value">Rp {{ number_format($mobil->harga_sewa, 0, ',', '.') }} / Hari</span>
+        </div>
+        <div class="data-row" style="margin-top: 1rem;">
+            <span class="data-label">Periode Sewa</span>
+            <span class="data-value">{{ date('d M Y', strtotime($tanggal_sewa)) }} — {{ date('d M Y', strtotime($tanggal_kembali)) }}</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">Total Durasi</span>
+            <span class="data-value">{{ $durasi }} Hari</span>
+        </div>
+        @if($catatan)
+        <div class="data-row">
+            <span class="data-label">Catatan Tambahan</span>
+            <span class="data-value" style="color: var(--ink-muted); font-style: italic; max-width: 60%;">"{{ $catatan }}"</span>
+        </div>
+        @endif
+
+        <div class="total-row">
+            <span class="total-label">Estimasi Total Biaya</span>
+            <span class="total-value">Rp {{ number_format($total, 0, ',', '.') }}</span>
+        </div>
 
         <form method="POST" action="{{ route('pelanggan.simpan') }}">
             @csrf
@@ -45,11 +80,9 @@
             <input type="hidden" name="total_biaya"     value="{{ $total }}">
             <input type="hidden" name="catatan"         value="{{ $catatan }}">
 
-            <div class="d-flex justify-content-between mt-4">
-                <a href="{{ route('pelanggan.pilih', $mobil->id_mobil) }}" class="btn btn-secondary">← Ubah Tanggal</a>
-                <button type="submit" class="btn btn-success btn-lg">
-                    Konfirmasi & Lanjut ke Pembayaran →
-                </button>
+            <div class="form-actions">
+                <a href="{{ route('pelanggan.pilih', $mobil->id_mobil) }}" class="btn-cancel">← Ubah Data</a>
+                <button type="submit" class="btn-submit">Simpan & Lanjut Bayar →</button>
             </div>
         </form>
     </div>
