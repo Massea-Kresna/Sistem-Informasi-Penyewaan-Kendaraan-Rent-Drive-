@@ -72,6 +72,9 @@ Route::middleware('admin.auth')->group(function () {
     Route::post('/admin/pelanggan/store',       [PelangganController::class, 'store'])->name('pelanggan.store');
     Route::post('/admin/pelanggan/delete/{id}', [PelangganController::class, 'delete'])->name('pelanggan.delete');
 
+    Route::get('/admin/pelanggan/edit/{id}',    [PelangganController::class, 'edit'])->name('pelanggan.edit');
+    Route::post('/admin/pelanggan/update/{id}', [PelangganController::class, 'update'])->name('pelanggan.update');
+
     // Penyewaan
     Route::get('/admin/penyewaan',                [PenyewaanController::class, 'index'])->name('penyewaan.index');
     Route::get('/admin/penyewaan/detail/{id}',    [PenyewaanController::class, 'detail'])->name('penyewaan.detail');
