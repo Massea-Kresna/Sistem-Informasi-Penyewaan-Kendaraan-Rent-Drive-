@@ -29,7 +29,7 @@
     }
     .data-table td {
         padding: 1rem 1.5rem; font-size: 13.5px; color: var(--ink);
-        border-bottom: 1px solid var(--line); vertical-align: middle; text-align: center;
+        border-bottom: 1px solid var(--line); vertical-align: middle; text-align: center; /* Rata Tengah Global */
     }
     
     .action-group { display: flex; gap: 8px; justify-content: center; }
@@ -70,11 +70,11 @@
         @foreach($datas as $i => $d)
             <tr>
                 <td>{{ $i+1 }}</td>
-                <td style="text-align: left;">
+                <td>
                     <span class="data-primary">{{ $d->nama }}</span>
                     <span class="data-secondary">{{ $d->email }}</span>
                 </td>
-                <td style="text-align: left;">
+                <td>
                     <span style="display:block; margin-bottom: 4px;">{{ $d->no_hp }}</span>
                     <span class="data-secondary">{{ Str::limit($d->alamat, 40) }}</span>
                 </td>
@@ -90,7 +90,7 @@
                             <button onclick="return confirm('Hapus permanen data pelanggan ini beserta seluruh riwayat sewa-nya?')" class="btn-act delete">Hapus</button>
                         </form>
                     </div>
-                                </td>
+                </td>
             </tr>
         @endforeach
         </tbody>
